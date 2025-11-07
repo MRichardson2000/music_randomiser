@@ -4,23 +4,32 @@ from src.services import XmlReader
 environment = XmlReader()
 
 
-def random_artist(times: int) -> str | None:
-    for _ in range(times):
-        artists = environment.view_artists()
-        random_artist_selection = random.choice(artists)
-        return random_artist_selection
+def random_artist(n: int = 2) -> list[str]:
+    list_of_artists: list[str] = []
+    random_artists: list[str] = []
+    artists = environment.view_artists()
+    for artist in artists:
+        list_of_artists.append(artist)
+    for _ in range(n):
+        random_artists.append(random.choice(list_of_artists))
+    return random_artists
 
 
-def random_album(times: int) -> str | None:
-    for _ in range(times):
-        albums = environment.view_albums()
-        random_album_selection = random.choice(albums)
-        return random_album_selection
+def random_album(n: int = 5) -> list[str]:
+    list_of_albums: list[str] = []
+    random_albums: list[str] = []
+    albums = environment.view_albums()
+    for album in albums:
+        list_of_albums.append(album)
+    for _ in range(n):
+        random_albums.append(random.choice(albums))
+    return random_albums
 
 
 def main() -> None:
-    pass
+    print(random_artist())
+    print(random_album())
 
 
 if __name__ == "__main__":
-    pass
+    main()
