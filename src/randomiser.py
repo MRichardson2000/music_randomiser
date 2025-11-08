@@ -43,10 +43,24 @@ def random_2025_album(n: int = 5) -> list[str]:
     return random_albums
 
 
+def random_2026_album(n: int = 5) -> list[str]:
+    list_of_albums: list[str] = []
+    random_albums: list[str] = []
+    albums = environment.view_2026_albums()
+    for album in albums:
+        list_of_albums.append(album)
+    if albums:
+        for _ in range(n):
+            choice = random.choice(albums)
+            random_albums.append(choice)
+    return random_albums
+
+
 def main() -> None:
     print(random_artist())
     print(random_album())
     print(random_2025_album())
+    print(random_2026_album())
 
 
 if __name__ == "__main__":

@@ -66,6 +66,27 @@ class XmlReader:
             print(xml_file)
             return []
 
+    def view_2026_albums(self) -> list[str]:
+        albums: set[str] = set()
+        xml_file = XmlReader.read_xml(self)
+        if isinstance(xml_file, dict):
+            tracks = cast(dict[str, dict[str, Any]], xml_file.get("Tracks", {}))
+            for v in tracks.values():
+                album = v.get("Album")
+                year = v.get("Release Date")
+                if (
+                    isinstance(album, str)
+                    and isinstance(year, datetime)
+                    and year.year == 2026
+                ):
+                    if " - Single" in album:
+                        continue
+                    albums.add(album)
+            return sorted(albums)
+        else:
+            print(xml_file)
+            return []
+
     def view_highest_skipped_songs(self) -> dict[str, int] | None:
         songs_skipped: dict[str, int] = {}
         xml_file = XmlReader.read_xml(self)
