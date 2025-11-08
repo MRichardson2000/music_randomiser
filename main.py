@@ -1,4 +1,4 @@
-from src.randomiser import random_album, random_artist, random_2025_album
+from src.randomiser import random_album, random_artist, random_2025_album, random_2026_album
 from src.services import XmlReader
 
 
@@ -8,6 +8,7 @@ def main():
     print(random_album())
     print(random_artist())
     print(random_2025_album())
+    print(random_2026_album())
 
 
 if __name__ == "__main__":
