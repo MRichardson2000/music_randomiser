@@ -66,19 +66,21 @@ class XmlReader:
             print(xml_file)
             return []
 
-    # def view_highest_skips(self) -> dict[str, int]:
-    #     artist_skip_count: dict[str, int] = {}
-    #     albums_skip_count: dict[str, int] = {}
-    #     xml_file = XmlReader.read_xml(self)
-    #     if isinstance(xml_file, dict):
-    #         tracks = cast(dict[str, dict[str, Any]], xml_file.get("Tracks", {}))
-    #         for _, v in tracks.items():
-    #             artist = v.get("Artist")
-    #             album = v.get("Album")
-    #             skip_count = v.get("Skip Count")
-    #             if artist:
-    #                 pass
-    #                 # come back to later
+    def view_highest_skipped_songs(self) -> dict[str, int] | None:
+        songs_skipped: dict[str, int] = {}
+        xml_file = XmlReader.read_xml(self)
+        if isinstance(xml_file, dict):
+            try:
+                tracks = cast(dict[str, dict[str, Any]], xml_file.get("Tracks", {}))
+                for v in tracks.values():
+                    song_name = v.get("Name")
+                    skip_count = v.get("Skip Count")
+                    if song_name and skip_count:
+                        if skip_count > 5:
+                            songs_skipped[song_name] = skip_count
+                return songs_skipped
+            except Exception as e:
+                raise e
 
 
 if __name__ == "__main__":

@@ -10,8 +10,10 @@ def random_artist(n: int = 2) -> list[str]:
     artists = environment.view_artists()
     for artist in artists:
         artist_list.append(artist)
-    for _ in range(n):
-        random_artists.append(random.choice(artist_list))
+    if artists:
+        for _ in range(n):
+            choice = random.choice(artist_list)
+            random_artists.append(choice)
     return random_artists
 
 
@@ -21,8 +23,10 @@ def random_album(n: int = 5) -> list[str]:
     albums = environment.view_albums()
     for album in albums:
         list_of_albums.append(album)
-    for _ in range(n):
-        random_albums.append(random.choice(albums))
+    if albums:
+        for _ in range(n):
+            choice = random.choice(albums)
+            random_albums.append(choice)
     return random_albums
 
 
