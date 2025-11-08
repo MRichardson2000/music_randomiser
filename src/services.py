@@ -43,7 +43,7 @@ class XmlReader:
         else:
             print(xml_file)
             return []
-        
+
     def view_highest_skips(self) -> dict[str, int]:
         artist_skip_count: dict[str, int] = {}
         albums_skip_count: dict[str, int] = {}
@@ -56,7 +56,7 @@ class XmlReader:
                 skip_count = v.get("Skip Count")
                 if artist:
                     pass
-                    #come back to later
+                    # come back to later
 
 
 if __name__ == "__main__":

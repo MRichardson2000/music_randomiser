@@ -4,10 +4,12 @@ from src.services import XmlReader
 environment = XmlReader()
 
 
-def random_artist(n: int = 2) -> list[str]:
+def random_artist(n: int = 2, year: int = 2025) -> list[str]:
     list_of_artists: list[str] = []
+    artists_year: list[str] = []
     random_artists: list[str] = []
     artists = environment.view_artists()
+    
     for artist in artists:
         list_of_artists.append(artist)
     for _ in range(n):
@@ -27,8 +29,8 @@ def random_album(n: int = 5) -> list[str]:
 
 
 def main() -> None:
-    print(random_artist())
-    print(random_album())
+    # print(random_artist())
+    print(random_album(1))
 
 
 if __name__ == "__main__":
