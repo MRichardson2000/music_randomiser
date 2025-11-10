@@ -1,6 +1,9 @@
 from src.randomiser import (
     random_album,
-    random_artist
+    random_artist,
+    random_single,
+    random_2025_album,
+    random_2026_album,
 )
 from src.services import XmlReader
 
@@ -10,6 +13,7 @@ def main():
     print(reader.view_highest_skipped_songs())
     print(random_album())
     print(random_artist())
+    print(random_single())
     print(random_2025_album())
     print(random_2026_album())
 

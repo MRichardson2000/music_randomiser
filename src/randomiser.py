@@ -4,9 +4,8 @@ from src.services import XmlReader
 environment = XmlReader()
 
 
-def random_artist(n: int = 2, year: int = 2025) -> list[str]:
+def random_artist(n: int = 2) -> list[str]:
     list_of_artists: list[str] = []
-    artists_year: list[str] = []
     random_artists: list[str] = []
     artists = environment.view_artists()
     for artist in artists:
@@ -28,10 +27,12 @@ def random_album(n: int = 5) -> list[str]:
 
 
 def random_single(n: int = 20) -> list[str]:
+    """TODO: Come back to this and work out why singles have nulls when the length is 91
+    without logic and with logic to handle nulls."""
     list_of_singles: list[str] = []
     random_singles: list[str] = []
     singles = environment.view_singles()
-    for single in singles:
+    for single in singles:  # ignore for now - come back to
         list_of_singles.append(single)
     for _ in range(n):
         choice = random.choice(list_of_singles)
@@ -39,9 +40,32 @@ def random_single(n: int = 20) -> list[str]:
     return random_singles
 
 
+def random_2025_album(n: int = 2) -> list[str]:
+    list_of_albums: list[str] = []
+    random_2025_album: list[str] = []
+    albums = environment.view_2025_albums()
+    for album in albums:
+        list_of_albums.append(album)
+    for _ in range(n):
+        choice = random.choice(list_of_albums)
+        random_2025_album.append(choice)
+    return random_2025_album
+
+
+def random_2026_album(n: int = 2) -> list[str]:
+    list_of_albums: list[str] = []
+    random_2026_album: list[str] = []
+    albums = environment.view_2026_albums()
+    for album in albums:
+        list_of_albums.append(album)
+    for _ in range(n):
+        choice = random.choice(list_of_albums)
+        random_2026_album.append(choice)
+    return random_2026_album
+
+
 def main() -> None:
-    # print(random_artist())
-    print(random_album(1))
+    pass
 
 
 if __name__ == "__main__":

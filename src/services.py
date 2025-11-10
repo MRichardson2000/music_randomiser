@@ -1,7 +1,7 @@
 import plistlib
 from pathlib import Path
 from src.config import XML_FILE
-from typing import Any, Union, cast
+from typing import Any, Union, Optional, cast
 from datetime import datetime
 
 
@@ -103,7 +103,7 @@ class XmlReader:
             except Exception as e:
                 raise e
 
-    def view_singles(self) -> list[str]:
+    def view_singles(self) -> Optional[list[str]]:
         singles: set[str] = set()
         xml_file = XmlReader.read_xml(self)
         if isinstance(xml_file, dict):
@@ -117,8 +117,35 @@ class XmlReader:
             except Exception as e:
                 raise e
 
+    def view_last_played_date(
+        self, song: Optional[str], album: Optional[str]
+    ) -> dict[str, str] | None:
+        chosen_song: dict[str, str] = {}
+        chosen_album: dict[str, str] = {}
+        xml_file = XmlReader.read_xml(self)
+        if isinstance(xml_file, dict):
+            try:
+                tracks = cast(dict[str, dict[str, Any]], xml_file.get("Tracks", {}))
+                for v in tracks.values():
+                    if song in v:
+                        requested_song = v.get("Name")
+                        song_played_date = v.get("Play Date UTC")
+                        if requested_song and song_played_date:
+                            chosen_song[requested_song] = song_played_date
+                    elif album in v:
+                        requested_album = v.get("Album")
+                        album_played_date = v.get("Play Date UTC")
+                        if requested_album and album_played_date:
+                            chosen_album[requested_album] = album_played_date
+                    if song:
+                        return chosen_song
+                    elif song:
+                        return chosen_album
+            except Exception as e:
+                raise e
+
 
 if __name__ == "__main__":
     reader = XmlReader()
-    result = reader.view_albums()
+    result = reader.view_highest_skipped_songs()
     print(result)
