@@ -4,16 +4,15 @@ from src.services import XmlReader
 environment = XmlReader()
 
 
-def random_artist(n: int = 2) -> list[str]:
-    artist_list: list[str] = []
+def random_artist(n: int = 2, year: int = 2025) -> list[str]:
+    list_of_artists: list[str] = []
+    artists_year: list[str] = []
     random_artists: list[str] = []
     artists = environment.view_artists()
     for artist in artists:
-        artist_list.append(artist)
-    if artists:
-        for _ in range(n):
-            choice = random.choice(artist_list)
-            random_artists.append(choice)
+        list_of_artists.append(artist)
+    for _ in range(n):
+        random_artists.append(random.choice(list_of_artists))
     return random_artists
 
 
@@ -23,44 +22,26 @@ def random_album(n: int = 5) -> list[str]:
     albums = environment.view_albums()
     for album in albums:
         list_of_albums.append(album)
-    if albums:
-        for _ in range(n):
-            choice = random.choice(albums)
-            random_albums.append(choice)
+    for _ in range(n):
+        random_albums.append(random.choice(albums))
     return random_albums
 
 
-def random_2025_album(n: int = 5) -> list[str]:
-    list_of_albums: list[str] = []
-    random_albums: list[str] = []
-    albums = environment.view_2025_albums()
-    for album in albums:
-        list_of_albums.append(album)
-    if albums:
-        for _ in range(n):
-            choice = random.choice(albums)
-            random_albums.append(choice)
-    return random_albums
-
-
-def random_2026_album(n: int = 5) -> list[str]:
-    list_of_albums: list[str] = []
-    random_albums: list[str] = []
-    albums = environment.view_2026_albums()
-    for album in albums:
-        list_of_albums.append(album)
-    if albums:
-        for _ in range(n):
-            choice = random.choice(albums)
-            random_albums.append(choice)
-    return random_albums
+def random_single(n: int = 20) -> list[str]:
+    list_of_singles: list[str] = []
+    random_singles: list[str] = []
+    singles = environment.view_singles()
+    for single in singles:
+        list_of_singles.append(single)
+    for _ in range(n):
+        choice = random.choice(list_of_singles)
+        random_singles.append(choice)
+    return random_singles
 
 
 def main() -> None:
-    print(random_artist())
-    print(random_album())
-    print(random_2025_album())
-    print(random_2026_album())
+    # print(random_artist())
+    print(random_album(1))
 
 
 if __name__ == "__main__":

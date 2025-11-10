@@ -66,7 +66,7 @@ class XmlReader:
             print(xml_file)
             return []
 
-    def view_2026_albums(self) -> list[str]:
+    def view_2026_albums(self) -> Union[list[str], str]:
         albums: set[str] = set()
         xml_file = XmlReader.read_xml(self)
         if isinstance(xml_file, dict):
@@ -100,6 +100,20 @@ class XmlReader:
                         if skip_count > 5:
                             songs_skipped[song_name] = skip_count
                 return songs_skipped
+            except Exception as e:
+                raise e
+
+    def view_singles(self) -> list[str]:
+        singles: set[str] = set()
+        xml_file = XmlReader.read_xml(self)
+        if isinstance(xml_file, dict):
+            try:
+                tracks = cast(dict[str, dict[str, Any]], xml_file.get("Tracks", {}))
+                for v in tracks.values():
+                    album = v.get("Album")
+                    if album and " - Single" in album:
+                        singles.add(album)
+                return sorted(singles)
             except Exception as e:
                 raise e
 
