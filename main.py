@@ -1,8 +1,6 @@
 from src.randomiser import (
     random_album,
-    random_artist,
-    random_2025_album,
-    random_2026_album,
+    random_artist
 )
 from src.services import XmlReader
 
