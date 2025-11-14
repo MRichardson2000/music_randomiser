@@ -95,9 +95,8 @@ class XmlReader:
             for v in tracks.values():
                 song_name = v.get("Name")
                 skip_count = v.get("Skip Count")
-                if song_name and skip_count:
-                    if skip_count > 5:
-                        songs_skipped[song_name] = skip_count
+                if song_name and skip_count and skip_count > 5:
+                    songs_skipped[song_name] = skip_count
             return songs_skipped
 
     def view_singles(self) -> Optional[list[str]]:
@@ -125,32 +124,19 @@ class XmlReader:
                 tracks = cast(dict[str, dict[str, Any]], xml_file.get("Tracks", {}))
                 for v in tracks.values():
                     if song and v.get("Name") == song:
-                        song_played_date = v.get("Play Date UTC")
-                        if song_played_date:
-                            clean_datetime = datetime.strptime(
-                                song_played_date, "%Y-%m-%dT%H:%M:%SZ"
-                            )
-                            formatted_date = clean_datetime.strftime(
-                                "%A, %d %B %Y at %I:%M %P"
-                            )
-                            str_date = str(formatted_date)
-                            chosen_song[song] = str_date
+                        song_date = v.get("Year")
+                        if not song_date:
+                            continue
+                        chosen_song[song] = song_date
                     elif album and v.get("Album") == album:
-                        album_played_date = v.get("Play Date UTC")
-                        if album_played_date:
-                            clean_datetime = datetime.strptime(
-                                album_played_date, "%Y-%m-%dT%H:%M:%SZ"
-                            )
-                            formatted_date = clean_datetime.strftime(
-                                "%A, %d %B %Y at %I:%M %P"
-                            )
-                            str_date = str(formatted_date)
-                            chosen_album[album] = str_date
-                            print(f"string dae: {str_date}")
+                        album_date = v.get("Year")
+                        if not album_date:
+                            continue
+                        chosen_album[album] = album_date
                 if song:
-                    return chosen_song if chosen_song else None
+                    return chosen_song
                 elif album:
-                    return chosen_album if chosen_album else None
+                    return chosen_album
             except Exception as e:
                 raise e
         return None
@@ -158,5 +144,11 @@ class XmlReader:
 
 if __name__ == "__main__":
     reader = XmlReader()
+    # result = reader.read_xml()
+    # result = reader.view_artists()
+    # result = reader.view_albums()
+    # result = reader.view_2025_albums()
+    # result = reader.view_2026_albums()
+    # result = reader.view_highest_skipped_songs()
     result = reader.view_last_played_date(song=None, album="Melancholy")
     print(result)

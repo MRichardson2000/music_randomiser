@@ -27,13 +27,12 @@ def random_album(n: int = 5) -> list[str]:
 
 
 def random_single(n: int = 20) -> list[str]:
-    """TODO: Come back to this and work out why singles have nulls when the length is 91
-    without logic and with logic to handle nulls."""
     list_of_singles: list[str] = []
     random_singles: list[str] = []
     singles = environment.view_singles()
-    for single in singles:  # ignore for now - come back to
-        list_of_singles.append(single)
+    if singles:
+        for single in singles:
+            list_of_singles.append(single)
     for _ in range(n):
         choice = random.choice(list_of_singles)
         random_singles.append(choice)
@@ -65,7 +64,11 @@ def random_2026_album(n: int = 2) -> list[str]:
 
 
 def main() -> None:
-    pass
+    print(random_artist())
+    print(random_album())
+    print(random_single())
+    print(random_2025_album())
+    print(random_2026_album())
 
 
 if __name__ == "__main__":

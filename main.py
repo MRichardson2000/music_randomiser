@@ -11,6 +11,7 @@ from src.services import XmlReader
 def main():
     reader = XmlReader()
     print(reader.view_highest_skipped_songs())
+    print(reader.view_last_played_date(None, None))
     print(random_album())
     print(random_artist())
     print(random_single())
