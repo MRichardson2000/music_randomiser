@@ -9,14 +9,15 @@ from src.services import XmlReader
 
 
 def main():
-    # reader = XmlReader()
-    # print(reader.view_highest_skipped_songs())
-    # print(reader.view_last_played_date(None, None))
+    reader = XmlReader()
+    print(" -- Showing highest Skipped songs -- ")
+    print(reader.view_highest_skipped_songs())
+    print(reader.view_last_played_date(None, None))
     print(random_album(1))
-    # print(random_artist())
-    # print(random_single())
-    # print(random_2025_album())
-    # print(random_2026_album())
+    print(random_artist())
+    print(random_single())
+    print(random_2025_album())
+    print(random_2026_album())
 
 
 if __name__ == "__main__":
