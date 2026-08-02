@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import sqlalchemy as sa
+from collections.abc import Mapping, Sequence
 from typing import Any
 from .utils import CREATES_DBO, ANALYTICS_DBO
 from music_randomiser.logger import get_logger
@@ -48,6 +49,40 @@ def execute_query(query: str, params: dict[str, Any] | None = None) -> None:
         raise DatabaseError(f"Failed to execute query due to: {e}")
 
 
+def execute_batch(query: str, params_list: Sequence[Mapping[str, Any]]) -> None:
+    """For executing batch inserts so it doesn't take forever"""
+    engine = get_engine()
+    try:
+        with engine.begin() as conn:
+            conn.execute(sa.text(query), params_list)
+            logger.debug(
+                "Successfully executed batch insert of %d items", len(params_list)
+            )
+    except Exception as e:
+        logger.error("Failed batch execution: %s", e, exc_info=True)
+        raise DatabaseError(f"Failed batch execution due to: {e}")
+
+
+def execute_transaction(
+    statements: list[tuple[str, Sequence[Mapping[str, Any]] | dict[str, Any] | None]],
+) -> None:
+    """For executing multiple transactions - useful because I want to delete everything before rewriting back to the db"""
+    engine = get_engine()
+    try:
+        with engine.begin() as conn:
+            for query, params in statements:
+                if params is not None:
+                    conn.execute(sa.text(query), params or {})
+                else:
+                    conn.execute(sa.text(query))
+            logger.debug(
+                "Successfully executed transaction with %d statements", len(statements)
+            )
+    except Exception as e:
+        logger.error("Failed transaction execution: %s", e, exc_info=True)
+        raise DatabaseError(f"Failed transaction execution due to: {e}")
+
+
 def load_sql_as_text(path: Path, file_name: str) -> str:
     """My SQL files in the DBO fold can be read in as text by using this function"""
     full_path = str(path) + "/" + file_name
@@ -56,13 +91,14 @@ def load_sql_as_text(path: Path, file_name: str) -> str:
 
 
 def create_schemas() -> None:
-    table = load_sql_as_text(CREATES_DBO, "*_table.sql")
-    print("# --- Creating Walk Table --- #")
-    execute_query(table)
+    music_table = load_sql_as_text(CREATES_DBO, "create_music_table.sql")
+    print("# --- Creating Music Table --- #")
+    execute_query(music_table)
 
 
 def view_sql_as_text() -> None:
-    print(fetch_result(""))
+    # print(fetch_result(""))
+    pass
 
 
 def main() -> None:

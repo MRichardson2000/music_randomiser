@@ -1,4 +1,4 @@
-from src.music_randomiser.services import (
+from music_randomiser.service import (
     random_artist,
 )
 

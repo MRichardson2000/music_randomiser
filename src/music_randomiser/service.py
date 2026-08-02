@@ -4,6 +4,8 @@ from music_randomiser.utils import XML_FILE
 from typing import Any, Optional
 import random
 from music_randomiser.logger import get_logger
+from music_randomiser.dbutils import execute_transaction
+from music_randomiser.music import Music, parse_music
 from music_randomiser.exceptions import ReadXmlError
 
 
@@ -27,7 +29,7 @@ def read_xml(file_path: Path = XML_FILE) -> dict[str, Any]:
 
 
 ######################################################################
-# Artists
+# Analytics - all of this needs changing to db utilities.
 ######################################################################
 
 
@@ -44,11 +46,6 @@ def random_artist(n: int = 1) -> list[str]:
     for _ in range(n):
         random_artists.append(random.choice(view_all_artists()))
     return random_artists
-
-
-######################################################################
-# Albums
-######################################################################
 
 
 def view_all_albums() -> list[str]:
@@ -87,11 +84,6 @@ def random_year_album(n: int = 1, year: int = 2026) -> list[str]:
     return random_year_album
 
 
-######################################################################
-# Singles
-######################################################################
-
-
 def view_singles() -> list[str]:
     singles: set[str] = set()
     tracks = read_xml().get("Tracks", {})
@@ -106,11 +98,6 @@ def random_n_single(n: int = 1) -> list[str]:
     for _ in range(n):
         random_singles.append(random.choice(view_singles()))
     return random_singles
-
-
-######################################################################
-# Analytics
-######################################################################
 
 
 def view_highest_skipped_songs() -> dict[str, int] | None:
@@ -148,8 +135,34 @@ def view_last_played_date(
     return None
 
 
+######################################################################
+# DB Insertion
+######################################################################
+
+
+def process_and_store_library(file_path: Path = XML_FILE) -> None:
+    """Deletes the DB first, then reads the XML library, parses all tracks, and bulk-inserts them into the db.
+    Run this if I download a new xml file because I've added a lot to my library"""
+    raw_plist = read_xml(file_path)
+    tracks: dict[str, Any] = raw_plist.get("Tracks", {})
+    music_records: list[Music] = [parse_music(track) for track in tracks.values()]
+    truncate_sql = "truncate table music restart identity"
+    insert_sql = """
+        INSERT INTO music (
+            song_name,
+            artist,
+            album,
+            genre,
+            year
+        )
+        VALUES (:song_name, :artist, :album, :genre, :year);
+    """
+    execute_transaction([(truncate_sql, None), (insert_sql, music_records)])
+    logger.info("Successfully imported %d songs into database", len(music_records))
+
+
 def main() -> None:
-    print(view_last_played_date(song=None, album=None))
+    process_and_store_library()
 
 
 if __name__ == "__main__":
