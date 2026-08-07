@@ -1,8 +1,6 @@
 from pathlib import Path
 
-XML_FILE = (
-    Path(__file__).parent.parent.parent / "library_of_a_legend" / "Library.xml"
-).resolve()
+XML_FILE = (Path(__file__).parent.parent.parent / "Library.xml").resolve()
 DBO = (Path(__file__).parent.parent.parent / "dbo").resolve()
 CREATES_DBO = DBO / "creates"
 ANALYTICS_DBO = DBO / "analytics"

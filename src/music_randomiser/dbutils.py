@@ -49,20 +49,6 @@ def execute_query(query: str, params: dict[str, Any] | None = None) -> None:
         raise DatabaseError(f"Failed to execute query due to: {e}")
 
 
-def execute_batch(query: str, params_list: Sequence[Mapping[str, Any]]) -> None:
-    """For executing batch inserts so it doesn't take forever"""
-    engine = get_engine()
-    try:
-        with engine.begin() as conn:
-            conn.execute(sa.text(query), params_list)
-            logger.debug(
-                "Successfully executed batch insert of %d items", len(params_list)
-            )
-    except Exception as e:
-        logger.error("Failed batch execution: %s", e, exc_info=True)
-        raise DatabaseError(f"Failed batch execution due to: {e}")
-
-
 def execute_transaction(
     statements: list[tuple[str, Sequence[Mapping[str, Any]] | dict[str, Any] | None]],
 ) -> None:
@@ -97,13 +83,11 @@ def create_schemas() -> None:
 
 
 def view_sql_as_text() -> None:
-    # print(fetch_result(""))
     pass
 
 
 def main() -> None:
     create_schemas()
-    # view_sql_as_text()
 
 
 if __name__ == "__main__":
