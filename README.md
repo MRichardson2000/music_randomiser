@@ -6,11 +6,11 @@ I love music - but I tend to default to the same comfort bands and albums (Lorna
 
 I exported my Apple Music library as an XML file and used it as the foundation for this project. 
 
-To use you need to open apple music on a mac device - click file - library - export to xml and then save it. This is where it pulls the data from. I've got multiple devices so I made the decision to upload my xml file to github so I can make improvements on other devices if I feel like it. Otherwise I would've hidden it but it's up to you. #
+I use this for two situations:
+1. I use Carnets on my phone to run it as a jupyter notebook so I can randomise my selections whilst I'm out and about. So I have everything in app.py. No imports except the XML file
+2. I also have a database to store my full library and i'm not sure which direction i'm going at the moment but for Carnets I have to use plist to read from the xml but on my laptop I'm going to utilise postgresql instead. 
 
-I have built this program to work with the IOS app "carnets" which is why it's kinda bad code. It needs to work easily with a mobile keyboard so I've designed it to work so i call the same function everytime then just pass in the number for the function I want to call. 
-
-I have also written my library to a database as well in case I decide to expand this later. 
+To use you need to open apple music on a mac device - click file - library - export to xml and then save it. This is where it pulls the data from. I've got multiple devices so I made the decision to upload my xml file to github so I can make improvements on other devices if I feel like it. Otherwise I would've hidden it but it's up to you. 
 
 Sample Output: 
-['Mercenary', 'I Hope We Make It Out of This Alive', 'In Medias Res']
+['PSYCHOFRAME']
