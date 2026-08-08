@@ -3,9 +3,10 @@ from pathlib import Path
 from music_randomiser.utils import XML_FILE
 from typing import Any
 from music_randomiser.logger import get_logger
-from music_randomiser.dbutils import execute_transaction
+from music_randomiser.dbutils import execute_transaction, fetch_result, load_sql_as_text
 from music_randomiser.music import Music, parse_music
 from music_randomiser.exceptions import ReadXmlError
+from music_randomiser.utils import ANALYTICS_DBO
 
 
 logger = get_logger(__name__)
@@ -56,10 +57,19 @@ def process_and_store_library(file_path: Path = XML_FILE) -> None:
 ######################################################################
 # Analytics - SQL
 ######################################################################
+def get_random_artist() -> str:
+    artist = fetch_result(load_sql_as_text(ANALYTICS_DBO, "get_random_artist.sql"))
+    return artist[0]["artist"]
+
+
+def get_random_album() -> str:
+    album = fetch_result(load_sql_as_text(ANALYTICS_DBO, "get_random_album.sql"))
+    return album[0]["album"]
 
 
 def main() -> None:
-    process_and_store_library()
+    # process_and_store_library()
+    print(get_random_album())
 
 
 if __name__ == "__main__":

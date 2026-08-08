@@ -78,8 +78,8 @@ def load_sql_as_text(path: Path, file_name: str) -> str:
 
 def create_schemas() -> None:
     music_table = load_sql_as_text(CREATES_DBO, "create_music_table.sql")
-    print("# --- Creating Music Table --- #")
     execute_query(music_table)
+    print("# --- Created Music Table --- #")
 
 
 def view_sql_as_text() -> None:
@@ -87,7 +87,8 @@ def view_sql_as_text() -> None:
 
 
 def main() -> None:
-    create_schemas()
+    # create_schemas()
+    print(fetch_result(load_sql_as_text(ANALYTICS_DBO, "get_random_artist.sql")))
 
 
 if __name__ == "__main__":
