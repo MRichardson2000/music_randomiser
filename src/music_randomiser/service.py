@@ -3,10 +3,15 @@ from pathlib import Path
 from music_randomiser.utils import XML_FILE
 from typing import Any
 from music_randomiser.logger import get_logger
-from music_randomiser.dbutils import execute_transaction, fetch_result, load_sql_as_text
+from music_randomiser.dbutils import (
+    execute_transaction,
+    fetch_result,
+    load_sql_as_text,
+    execute_query,
+)
 from music_randomiser.music import Music, parse_music
 from music_randomiser.exceptions import ReadXmlError
-from music_randomiser.utils import ANALYTICS_DBO
+from music_randomiser.utils import ANALYTICS_DBO, CREATES_DBO
 
 
 logger = get_logger(__name__)
@@ -41,17 +46,42 @@ def process_and_store_library(file_path: Path = XML_FILE) -> None:
     music_records: list[Music] = [parse_music(track) for track in tracks.values()]
     truncate_sql = "truncate table music restart identity"
     insert_sql = """
-        INSERT INTO music (
-            song_name,
-            artist,
-            album,
-            genre,
-            year
-        )
-        VALUES (:song_name, :artist, :album, :genre, :year);
-    """
+            insert into music (
+                song_name,
+                artist,
+                album,
+                genre,
+                year,
+                total_time,
+                track_count,
+                play_count,
+                play_date_utc,
+                skip_count,
+                release_date
+            )
+            values (
+                :song_name,
+                :artist,
+                :album,
+                :genre,
+                :year,
+                :total_time,
+                :track_count,
+                :play_count,
+                :play_date_utc,
+                :skip_count,
+                :release_date
+            );
+        """
     execute_transaction([(truncate_sql, None), (insert_sql, music_records)])
     logger.info("Successfully imported %d songs into database", len(music_records))
+
+
+def rebuild_database() -> None:
+    """When I update my library, run this to refresh the database"""
+    music_table = load_sql_as_text(CREATES_DBO, "create_music_table.sql")
+    execute_query(music_table)
+    process_and_store_library()
 
 
 ######################################################################
@@ -67,9 +97,33 @@ def get_random_album() -> str:
     return album[0]["album"]
 
 
+def get_all_artists() -> list[str]:
+    list_artists: list[str] = []
+    artists = fetch_result(load_sql_as_text(ANALYTICS_DBO, "get_all_artists.sql"))
+    for x in artists:
+        for _, v in x.items():
+            list_artists.append(v)
+    return list_artists
+
+
+def get_all_albums() -> list[str]:
+    list_albums: list[str] = []
+    albums = fetch_result(load_sql_as_text(ANALYTICS_DBO, "get_all_albums.sql"))
+    for x in albums:
+        for _, v in x.items():
+            list_albums.append(v)
+    return list_albums
+
+
+def get_highest_skipped_song() -> list[dict[str, Any]]:
+    skips = fetch_result(
+        load_sql_as_text(ANALYTICS_DBO, "get_highest_skipped_song.sql")
+    )
+    return skips
+
+
 def main() -> None:
-    # process_and_store_library()
-    print(get_random_album())
+    print(get_highest_skipped_song())
 
 
 if __name__ == "__main__":
