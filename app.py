@@ -24,22 +24,26 @@ class ReadXmlError(MusicRandomiserError):
 ######################################################################
 # Read XML File
 ######################################################################
-def read_xml(file_path: str = "Library.xml") -> dict[str, Any]:
-    try:
-        with open(file_path, "rb") as file:
-            plist = plistlib.load(file)
-            return plist
-    except Exception as e:
-        raise ReadXmlError(f"Failed to read XML file due to: {e}")
 
 
 ######################################################################
 # Analytics
 ######################################################################
 class MusicAnalytics:
+    def __init__(self, file: str = "Library.xml") -> None:
+        self.file = file
+
+    def read_xml(self) -> dict[str, Any]:
+        try:
+            with open(self.file, "rb") as file:
+                plist = plistlib.load(file)
+                return plist
+        except Exception as e:
+            raise ReadXmlError(f"Failed to read XML file due to: {e}")
+
     def view_all_artists(self) -> list[str]:
         artists: set[str] = set()
-        tracks = read_xml().get("Tracks", {})
+        tracks = self.read_xml().get("Tracks", {})
         for v in tracks.values():
             artists.add(v.get("Artist"))
         return sorted(artists)
@@ -52,7 +56,7 @@ class MusicAnalytics:
 
     def view_all_albums(self) -> list[str]:
         albums: set[str] = set()
-        tracks = read_xml().get("Tracks", {})
+        tracks = self.read_xml().get("Tracks", {})
         for v in tracks.values():
             albums.add(v.get("Album"))
         return sorted(albums)
@@ -65,7 +69,7 @@ class MusicAnalytics:
 
     def view_year_albums(self, specified_year: int = 2025) -> list[str]:
         albums: set[str] = set()
-        tracks = read_xml().get("Tracks", {})
+        tracks = self.read_xml().get("Tracks", {})
         for v in tracks.values():
             if not v.get("Release Date") or not v.get("Album"):
                 continue
@@ -84,7 +88,7 @@ class MusicAnalytics:
 
     def view_singles(self) -> list[str]:
         singles: set[str] = set()
-        tracks = read_xml().get("Tracks", {})
+        tracks = self.read_xml().get("Tracks", {})
         for v in tracks.values():
             if v.get("Album") and " - Single" in v.get("Album"):
                 singles.add(v.get("Album"))
@@ -98,7 +102,7 @@ class MusicAnalytics:
 
     def view_highest_skipped_songs(self) -> dict[str, int] | None:
         songs_skipped: dict[str, int] = {}
-        tracks = read_xml().get("Tracks", {})
+        tracks = self.read_xml().get("Tracks", {})
         for v in tracks.values():
             song_name = v.get("Name")
             skip_count = v.get("Skip Count")
@@ -111,7 +115,7 @@ class MusicAnalytics:
     ) -> dict[str, str] | None:
         chosen_song: dict[str, str] = {}
         chosen_album: dict[str, str] = {}
-        tracks = read_xml().get("Tracks", {})
+        tracks = self.read_xml().get("Tracks", {})
         for v in tracks.values():
             if song and v.get("Name") == song:
                 song_date = v.get("Year")
@@ -133,8 +137,6 @@ class MusicAnalytics:
 ######################################################################
 # Entry point
 ######################################################################
-
-
 def selector(opt: int, val: int) -> None:
     ma = MusicAnalytics()
     if opt == 1:
