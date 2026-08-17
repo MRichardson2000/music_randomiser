@@ -1,1 +1,0 @@
-select distinct album from music

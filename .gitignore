@@ -11,6 +11,5 @@ wheels/
 .venv
 .env
 
-# log
-/logs
-*.log
+# XML
+Library.xml

@@ -1,1 +1,0 @@
-select distinct artist from music
